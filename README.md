@@ -4,6 +4,7 @@
  - [Git](#git)
  - [Manual](#manual)
 - [Usage](#usage)
+- [Sample](#sample)
 
 # Installation
 
@@ -24,3 +25,6 @@ chmod +x md-toc.py
 ./md-toc.py file1 file2 ..
 ```
 
+# Sample
+
+The table of contents at the top of this file was generated with this script.
