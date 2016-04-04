@@ -4,12 +4,15 @@ import re
 import sys
 
 
-pattern = re.compile(r'[\s\-,\']+')
+dashes = re.compile(r'[\s\-,]+')
+drop = re.compile(r'\'+')
 def gentoc(headers):
-    print('# Table of Contents\n')
+    out = '# Table of Contents\n\n'
     for header, level in headers:
-        header_id = pattern.sub('-', header.lower())
-        print(' ' * (level - 1) + '- [{0}](#{1})'.format(header, header_id))
+        header_id = drop.sub('', dashes.sub('-', header.lower()))
+        out += ' ' * (level - 1) + '- [{0}](#{1})\n'.format(header, header_id)
+    out += '\n'
+    return out
 
 
 def main(argv):
@@ -19,21 +22,27 @@ def main(argv):
             active = True
             in_toc = False
             headers = []
-            for l in f:
-                l = l.strip()
+            output = []
+            lines = f.readlines()
+            for l in lines:
                 # Ignore TOC
                 if '# Table of Contents' in l:
                     active = False
                 elif not active and l.startswith('-'):
                     in_toc = True
-                elif in_toc and l == '':
+                elif in_toc and l.strip() == '':
                     in_toc = False
                     active = True
                 # actual header parsing
-                elif active and l.startswith('#') and ' ' in l:
-                    marker, header = l.split(' ', 1)
-                    headers.append((header, len(marker)))
-            gentoc(headers)
+                elif active:
+                    output.append(l)
+                    l = l.strip()
+                    if l.startswith('#') and ' ' in l:
+                        marker, header = l.split(' ', 1)
+                        headers.append((header, len(marker)))
+            f.seek(0)
+            f.write(gentoc(headers))
+            f.write(''.join(output))
     return 0
 
 
