@@ -9,7 +9,7 @@ def gentoc(headers):
     print('# Table of Contents\n')
     for header, level in headers:
         header_id = pattern.sub('-', header.lower())
-        print(' ' * (level - 1) + '- [{0}]({1})'.format(header, header_id))
+        print(' ' * (level - 1) + '- [{0}](#{1})'.format(header, header_id))
 
 
 def main(argv):
